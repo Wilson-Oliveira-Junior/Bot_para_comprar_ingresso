@@ -35,12 +35,45 @@ class TicketPurchaser:
                 time.sleep(5)  # Wait for 5 seconds before refreshing
 
     def select_tickets(self):
-        # Add logic to handle the modal and select tickets
-        pass
+        try:
+            # Wait for the modal to appear and select the number of tickets
+            ticket_modal = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "ticket-modal"))
+            )
+            ticket_dropdown = ticket_modal.find_element(By.ID, "ticket-quantity")
+            ticket_dropdown.click()
+            ticket_dropdown.find_element(By.XPATH, "//option[text()='2']").click()  # Select 2 tickets
+
+            # Confirm ticket selection
+            confirm_button = ticket_modal.find_element(By.ID, "confirm-tickets")
+            confirm_button.click()
+            print("Tickets selected!")
+
+            # Proceed to the purchase page
+            proceed_button = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "proceed-to-purchase"))
+            )
+            proceed_button.click()
+            print("Proceeded to purchase page!")
+        except Exception as e:
+            print(f"Error selecting tickets: {e}")
 
     def purchase_tickets(self):
-        # Add logic to complete the purchase
-        pass
+        try:
+            # Wait for the purchase page to load and fill in payment details
+            payment_form = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "payment-form"))
+            )
+            payment_form.find_element(By.ID, "card-number").send_keys("4111111111111111")
+            payment_form.find_element(By.ID, "expiry-date").send_keys("12/25")
+            payment_form.find_element(By.ID, "cvv").send_keys("123")
+
+            # Confirm purchase
+            purchase_button = payment_form.find_element(By.ID, "purchase-button")
+            purchase_button.click()
+            print("Purchase completed!")
+        except Exception as e:
+            print(f"Error completing purchase: {e}")
 
     def close(self):
         self.driver.quit()
